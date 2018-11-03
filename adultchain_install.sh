@@ -32,7 +32,7 @@ function update_node() {
   then
     systemctl stop $COIN_NAME.service >/dev/null 2>&1
     $COIN_PATH$COIN_CLI stop >/dev/null 2>&1
-    sleep 10 >/dev/null 2>&1`
+    sleep 10 >/dev/null 2>&1
     rm $COIN_PATH$COIN_DAEMON $COIN_PATH$COIN_CLI >/dev/null 2>&1
     download_node
     configure_systemd
