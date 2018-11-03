@@ -28,13 +28,16 @@ function update_node() {
   then
     echo -e "${RED}$COIN_NAME is already installed and running the lastest version.${NC}"
     exit 0
-  else
+  elif [[ "$PROTOCOL_VERSION" -eq 70002 ]]
+  then
     systemctl stop $COIN_NAME.service >/dev/null 2>&1
     $COIN_PATH$COIN_CLI stop >/dev/null 2>&1
     rm $COIN_PATH$COIN_DAEMON $COIN_PATH$COIN_CLI >/dev/null 2>&1
     download_node
     configure_systemd
     exit 0
+  else
+    echo "Continue with the normal installation"
   fi
 }
 
