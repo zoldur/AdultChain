@@ -25,7 +25,7 @@ function update_node() {
   PROTOCOL_VERSION=$($COIN_PATH$COIN_CLI getinfo | jq .protocolversion)
   if [[ "$PROTOCOL_VERSION" -eq 70003 ]]
   then
-    echo -e "${RED}$COIN_NAME is already installed.${NC}"
+    echo -e "${RED}$COIN_NAME is already installed and running the lastest version.${NC}"
     exit 0
   else
     systemctl stop $COIN_NAME.service >/dev/null 2>&1
