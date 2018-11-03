@@ -6,7 +6,7 @@ CONFIGFOLDER='/root/.adultchain'
 COIN_DAEMON='adultchaind'
 COIN_CLI='adultchain-cli'
 COIN_PATH='/usr/local/bin/'
-COIN_TGZ='https://github.com/AdultChain/AdultChain/files/1892067/adultchain-1.2.1-x86_64-linux.tar.gz'
+COIN_TGZ='https://github.com/zoldur/AdultChain/releases/download/v1.2.2.0/adultchain.tar.gz'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
 COIN_NAME='AdultChain'
 COIN_PORT=6969
@@ -20,15 +20,32 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 
+function update_node() {
+  echo -e "Checking and backing up old Carbon installation"
+  PROTOCOL_VERSION=$($COIN_PATH$COIN_CLI getinfo | jq .protocolversion)
+  if [[ "$PROTOCOL_VERSION" -eq 70003 ]]
+  then
+    echo -e "${RED}$COIN_NAME is already installed.${NC}"
+    exit 0
+  else
+    systemctl stop $COIN_NAME.service >/dev/null 2>&1
+    $COIN_PATH$COIN_CLI stop >/dev/null 2>&1
+    rm $COIN_PATH$COIN_DAEMON $COIN_PATH$COIN_CLI >/dev/null 2>&1
+    download_node
+    configure_systemd
+    exit 0
+  fi
+}
+
 function download_node() {
   echo -e "Prepare to download ${GREEN}$COIN_NAME${NC}."
   cd $TMP_FOLDER >/dev/null 2>&1
   wget -q $COIN_TGZ
   compile_error
-  tar xvzf $COIN_ZIP
-  chmod +x $COIN_DAEMON $COIN_CLI
-  cp $COIN_DAEMON $COIN_CLI $COIN_PATH
-  cd ~ >/dev/null 2>&1
+  tar xvzf $COIN_ZIP >/dev/null 2>&1
+  chmod +x $COIN_DAEMON $COIN_CLI >/dev/null 2>&1
+  cp $COIN_DAEMON $COIN_CLI $COIN_PATH >/dev/null 2>&1
+  cd - >/dev/null 2>&1
   rm -rf $TMP_FOLDER >/dev/null 2>&1
   clear
 }
@@ -180,11 +197,6 @@ if [[ $EUID -ne 0 ]]; then
    echo -e "${RED}$0 must be run as root.${NC}"
    exit 1
 fi
-
-if [ -n "$(pidof $COIN_DAEMON)" ] || [ -e "$COIN_DAEMOM" ] ; then
-  echo -e "${RED}$COIN_NAME is already installed.${NC}"
-  exit 1
-fi
 }
 
 function prepare_system() {
@@ -200,7 +212,7 @@ apt-get update >/dev/null 2>&1
 apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make software-properties-common \
 build-essential libtool autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev libboost-program-options-dev \
 libboost-system-dev libboost-test-dev libboost-thread-dev sudo automake git wget curl libdb4.8-dev bsdmainutils libdb4.8++-dev \
-libminiupnpc-dev libgmp3-dev ufw pkg-config libevent-dev  libdb5.3++ unzip libzmq5 >/dev/null 2>&1
+libminiupnpc-dev libgmp3-dev ufw pkg-config libevent-dev  libdb5.3++ unzip libzmq5 jq >/dev/null 2>&1
 if [ "$?" -gt "0" ];
   then
     echo -e "${RED}Not all required packages were installed properly. Try to install them manually by running the following commands:${NC}\n"
@@ -210,7 +222,7 @@ if [ "$?" -gt "0" ];
     echo "apt-get update"
     echo "apt install -y make build-essential libtool software-properties-common autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev \
 libboost-program-options-dev libboost-system-dev libboost-test-dev libboost-thread-dev sudo automake git curl libdb4.8-dev \
-bsdmainutils libdb4.8++-dev libminiupnpc-dev libgmp3-dev ufw pkg-config libevent-dev libdb5.3++ unzip libzmq5"
+bsdmainutils libdb4.8++-dev libminiupnpc-dev libgmp3-dev ufw pkg-config libevent-dev libdb5.3++ unzip libzmq5 jq"
  exit 1
 fi
 clear
@@ -248,6 +260,7 @@ function setup_node() {
 clear
 
 checks
+update_node
 prepare_system
 download_node
 setup_node

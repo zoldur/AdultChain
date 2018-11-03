@@ -4,7 +4,7 @@ Shell script to install a [AdultChain Masternode](https://adultchain.xxx/) on a 
 
 ## VPS installation
 ```
-wget -q https://raw.githubusercontent.com/zoldur/AdultChain/master/adultchain_install.sh
+wget -N https://raw.githubusercontent.com/zoldur/AdultChain/master/adultchain_install.sh
 bash adultchain_install.sh
 ```
 ***
@@ -55,6 +55,11 @@ systemctl start AdultChain #To start AdultChain service
 systemctl stop AdultChain #To stop AdultChain service  
 systemctl is-enabled AdultChain #To check if AdultChain service is enabled on boot  
 ```  
+***
+
+## Masternode update:
+
+If you were running Adult Chain v.1.2.1, simply running the installer will update it to version 1.2.2.  
 ***
 
 ## Donations
