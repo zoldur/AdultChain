@@ -23,7 +23,7 @@ NC='\033[0m'
 function update_node() {
   echo -e "Checking if ${RED}$COIN_NAME is already installed and running the lastest version.${NC}"
   apt -y install jq >/dev/null 2>&1
-  PROTOCOL_VERSION=$($COIN_PATH$COIN_CLI getinfo | jq .protocolversion)
+  PROTOCOL_VERSION=$($COIN_PATH$COIN_CLI getinfo 2>/dev/null| jq .protocolversion)
   if [[ "$PROTOCOL_VERSION" -eq 70003 ]]
   then
     echo -e "${RED}$COIN_NAME is already installed and running the lastest version.${NC}"
