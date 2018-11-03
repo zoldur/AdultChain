@@ -35,6 +35,7 @@ function update_node() {
     rm $COIN_PATH$COIN_DAEMON $COIN_PATH$COIN_CLI >/dev/null 2>&1
     download_node
     configure_systemd
+    echo -e "{RED}$COIN_NAME updated to the latest version!${NC}"
     exit 0
   else
     echo "Continue with the normal installation"
