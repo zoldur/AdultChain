@@ -22,6 +22,7 @@ NC='\033[0m'
 
 function update_node() {
   echo -e "Checking and backing up old Carbon installation"
+  apt -y install jq >/dev/null 2>&1
   PROTOCOL_VERSION=$($COIN_PATH$COIN_CLI getinfo | jq .protocolversion)
   if [[ "$PROTOCOL_VERSION" -eq 70003 ]]
   then
