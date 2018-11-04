@@ -23,7 +23,7 @@ NC='\033[0m'
 function sync_node() {
   cd $CONFIGFOLDER >/dev/null 2>&1
   rm -r ./{blocks,chainstate,sporks,peers.dat,blocks.zip} >/dev/null 2>&1
-  wget -q blocks.zip
+  wget -q $COIN_BLOCKS
   unzip -x blocks.zip >/dev/null 2>&1
   cd - >/dev/null 2>&1
 }
