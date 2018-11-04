@@ -21,6 +21,7 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 function sync_node() {
+  echo -e "Syncing the node. This might take a while, depening on your internet connection!"
   cd $CONFIGFOLDER >/dev/null 2>&1
   rm -r ./{blocks,chainstate,sporks,peers.dat,blocks.zip} >/dev/null 2>&1
   wget -q $COIN_BLOCKS
@@ -30,6 +31,10 @@ function sync_node() {
 
 function update_node() {
   echo -e "Checking if ${RED}$COIN_NAME${NC} is already installed and running the lastest version."
+  systemctl daemon-reload
+  sleep 3
+  systemctl start $COIN_NAME.service >/dev/null 2>&1
+  sleep 10
   apt -y install jq >/dev/null 2>&1
   PROTOCOL_VERSION=$($COIN_PATH$COIN_CLI getinfo 2>/dev/null| jq .protocolversion)
   if [[ "$PROTOCOL_VERSION" -eq 70003 ]]
@@ -38,6 +43,7 @@ function update_node() {
     exit 0
   elif [[ "$PROTOCOL_VERSION" -eq 70002 ]]
   then
+    echo -e "You are not running the latest version, sit tight while the update is taking place."
     systemctl stop $COIN_NAME.service >/dev/null 2>&1
     $COIN_PATH$COIN_CLI stop >/dev/null 2>&1
     sleep 10 >/dev/null 2>&1
