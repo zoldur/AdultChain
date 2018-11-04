@@ -49,7 +49,7 @@ function update_node() {
     sleep 10 >/dev/null 2>&1
     rm $COIN_PATH$COIN_DAEMON $COIN_PATH$COIN_CLI >/dev/null 2>&1
     download_node
-    update_node
+    sync_node
     configure_systemd
     echo -e "${RED}$COIN_NAME${NC} updated to the latest version. Please make sure the Windows/Mac wallet is also updated."
     exit 0
