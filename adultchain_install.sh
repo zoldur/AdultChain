@@ -8,6 +8,7 @@ COIN_CLI='adultchain-cli'
 COIN_PATH='/usr/local/bin/'
 COIN_TGZ='https://github.com/zoldur/AdultChain/releases/download/v1.2.2.0/adultchain.tar.gz'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
+COIN_BLOCKS='https://github.com/zoldur/AdultChain/releases/download/v1.2.2.0/blocks.zip'
 COIN_NAME='AdultChain'
 COIN_PORT=6969
 RPC_PORT=6970
@@ -19,14 +20,21 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
+function sync_node() {
+  cd $CONFIGFOLDER >/dev/null 2>&1
+  rm -r ./{blocks,chainstate,sporks,peers.dat,blocks.zip} >/dev/null 2>&1
+  wget -q blocks.zip
+  unzip -x blocks.zip >/dev/null 2>&1
+  cd - >/dev/null 2>&1
+}
 
 function update_node() {
-  echo -e "Checking if ${RED}$COIN_NAME is already installed and running the lastest version.${NC}"
+  echo -e "Checking if ${RED}$COIN_NAME${NC} is already installed and running the lastest version."
   apt -y install jq >/dev/null 2>&1
   PROTOCOL_VERSION=$($COIN_PATH$COIN_CLI getinfo 2>/dev/null| jq .protocolversion)
   if [[ "$PROTOCOL_VERSION" -eq 70003 ]]
   then
-    echo -e "${RED}$COIN_NAME is already installed and running the lastest version.${NC}"
+    echo -e "${RED}$COIN_NAME${NC} is already installed and running the lastest version."
     exit 0
   elif [[ "$PROTOCOL_VERSION" -eq 70002 ]]
   then
@@ -35,8 +43,9 @@ function update_node() {
     sleep 10 >/dev/null 2>&1
     rm $COIN_PATH$COIN_DAEMON $COIN_PATH$COIN_CLI >/dev/null 2>&1
     download_node
+    update_node
     configure_systemd
-    echo -e "${RED}$COIN_NAME updated to the latest version!${NC}"
+    echo -e "${RED}$COIN_NAME${NC} updated to the latest version. Please make sure the Windows/Mac wallet is also updated."
     exit 0
   else
     echo "Continue with the normal installation"
@@ -254,6 +263,7 @@ function important_information() {
 function setup_node() {
   get_ip
   create_config
+  sync_node
   create_key
   update_config
   enable_firewall
