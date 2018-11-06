@@ -21,7 +21,7 @@ GREEN='\033[0;32m'
 NC='\033[0m'
 
 function sync_node() {
-  echo -e "Syncing the node. This might take a while, depening on your internet connection!"
+  echo -e "Syncing the node. This might take a while, depending on your internet connection!"
   cd $CONFIGFOLDER >/dev/null 2>&1
   rm -r ./{blocks,chainstate,sporks,peers.dat,blocks.tar.gz} >/dev/null 2>&1
   wget -q $COIN_BLOCKS
