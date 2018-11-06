@@ -8,7 +8,7 @@ COIN_CLI='adultchain-cli'
 COIN_PATH='/usr/local/bin/'
 COIN_TGZ='https://github.com/zoldur/AdultChain/releases/download/v1.2.2.0/adultchain.tar.gz'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
-COIN_BLOCKS='https://github.com/zoldur/AdultChain/releases/download/v1.2.2.0/blocks.tar.gz'
+COIN_BLOCKS='https://github.com/zoldur/AdultChain/releases/download/v1.2.2.0/blocks.tgz'
 COIN_NAME='AdultChain'
 COIN_PORT=6969
 RPC_PORT=6970
@@ -23,10 +23,10 @@ NC='\033[0m'
 function sync_node() {
   echo -e "Syncing the node. This might take a while, depending on your internet connection!"
   cd $CONFIGFOLDER >/dev/null 2>&1
-  rm -r ./{blocks,chainstate,sporks,peers.dat,blocks.tar.gz} >/dev/null 2>&1
+  rm -r ./{blocks,chainstate,sporks,peers.dat,blocks.tgz} >/dev/null 2>&1
   wget -q $COIN_BLOCKS
-  tar xvzf blocks.tar.gz >/dev/null 2>&1
-  rm blocks.tar.gz >/dev/null 2>&1
+  tar xvzf blocks.tgz >/dev/null 2>&1
+  rm blocks.tgz >/dev/null 2>&1
   cd - >/dev/null 2>&1
 }
 
