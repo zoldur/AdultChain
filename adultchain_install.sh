@@ -8,7 +8,7 @@ COIN_CLI='adultchain-cli'
 COIN_PATH='/usr/local/bin/'
 COIN_TGZ='https://github.com/zoldur/AdultChain/releases/download/v1.2.2.0/adultchain.tar.gz'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
-COIN_BLOCKS='https://github.com/zoldur/AdultChain/releases/download/v1.2.2.0/blocks.zip'
+COIN_BLOCKS='https://github.com/zoldur/AdultChain/releases/download/v1.2.2.0/blocks.tar.gz'
 COIN_NAME='AdultChain'
 COIN_PORT=6969
 RPC_PORT=6970
@@ -23,9 +23,10 @@ NC='\033[0m'
 function sync_node() {
   echo -e "Syncing the node. This might take a while, depening on your internet connection!"
   cd $CONFIGFOLDER >/dev/null 2>&1
-  rm -r ./{blocks,chainstate,sporks,peers.dat,blocks.zip} >/dev/null 2>&1
+  rm -r ./{blocks,chainstate,sporks,peers.dat,blocks.tar.gz} >/dev/null 2>&1
   wget -q $COIN_BLOCKS
-  unzip -x blocks.zip >/dev/null 2>&1
+  tar xvzf blocks.tar.gz >/dev/null 2>&1
+  rm blocks.tar.gz >/dev/null 2>&1
   cd - >/dev/null 2>&1
 }
 
@@ -54,7 +55,7 @@ function update_node() {
     echo -e "${RED}$COIN_NAME${NC} updated to the latest version. Please make sure the Windows/Mac wallet is also updated."
     exit 0
   else
-    echo "Continue with the normal installation"
+    echo "${RED}No $COIN_NAME${NC} installation detected. Continue with the normal installation"
   fi
 }
 
@@ -121,7 +122,7 @@ function create_config() {
   cat << EOF > $CONFIGFOLDER/$CONFIG_FILE
 rpcuser=$RPCUSER
 rpcpassword=$RPCPASSWORD
-#rpcport=$RPC_PORT
+rpcport=$RPC_PORT
 rpcallowip=127.0.0.1
 listen=1
 server=1
