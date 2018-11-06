@@ -38,6 +38,7 @@ function update_node() {
   sleep 10
   apt -y install jq >/dev/null 2>&1
   PROTOCOL_VERSION=$($COIN_PATH$COIN_CLI getinfo 2>/dev/null| jq .protocolversion)
+  echo $
   if [[ "$PROTOCOL_VERSION" -eq 70003 ]]
   then
     echo -e "${RED}$COIN_NAME${NC} is already installed and running the lastest version."
@@ -55,7 +56,7 @@ function update_node() {
     echo -e "${RED}$COIN_NAME${NC} updated to the latest version. Please make sure the Windows/Mac wallet is also updated."
     exit 0
   else
-    echo "${RED}No $COIN_NAME${NC} installation detected. Continue with the normal installation"
+    echo -e "${RED}No $COIN_NAME${NC} installation detected. Continue with the normal installation"
   fi
 }
 
